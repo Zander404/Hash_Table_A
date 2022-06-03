@@ -33,8 +33,8 @@ Lista* insereLista(Lista* li, struct aluno al){
     no->dados = al;
     no->prox = (*li);
     li = no;
-    return 1;
 
+    return 1;
 }
 
 int removeLista(Lista* li){

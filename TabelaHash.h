@@ -48,7 +48,6 @@ int sondagemLinear(int pos, int i, int TABLE_SIZE);
 int sondagemQuadratica(int pos, int i, int TABLE_SIZE);
 int duploHashing(int pos, int chave, int i, int TABLE_SIZE);
 
-
 Lista* criaLista();
 Lista* insereLista(Lista* li, struct aluno al);
 int removeLista(Lista *li);
