@@ -48,8 +48,6 @@ int removeLista(Lista* li){
 }
 
 
-
-
 Hash* criaHash(int TABLE_SIZE){
 
     Hash* ha = (Hash*) malloc(sizeof(Hash));

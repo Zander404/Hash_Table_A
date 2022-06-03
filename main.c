@@ -69,10 +69,9 @@ int main() {
 
     //Hash com Sondagem Quadratica
     for(int i=0;i<100;i++){
-        sondagemQuadratica(1,1,hash)
+        sondagemQuadratica(1,1,hash);
 
     }
-
 
     gettimeofday(&t1, 0);
 
