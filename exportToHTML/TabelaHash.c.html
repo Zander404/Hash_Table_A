@@ -1,0 +1,250 @@
+<html>
+<head>
+<title>TabelaHash.c</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #808080;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #bbb529;}
+.s3 { color: #6a8759;}
+.s4 { color: #cc7832;}
+.s5 { color: #6897bb;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+TabelaHash.c</font>
+</center></td></tr></table>
+<pre><span class="s0">// https://computinglife.wordpress.com/2008/11/20/why-do-hash-functions-use-prime-numbers/</span>
+<span class="s0">// http://stackoverflow.com/questions/2624192/good-hash-function-for-strings</span>
+
+<span class="s2">#include </span><span class="s3">&lt;stdio.h&gt;</span>
+<span class="s2">#include </span><span class="s3">&lt;stdlib.h&gt;</span>
+<span class="s2">#include </span><span class="s3">&lt;string.h&gt;</span>
+<span class="s2">#include </span><span class="s3">&lt;sys/time.h&gt;</span>
+<span class="s2">#include </span><span class="s3">&quot;TabelaHash.h&quot; </span><span class="s0">//inclui os Prot�tipos</span>
+
+
+<span class="s4">float </span><span class="s1">timedifference_msec(</span><span class="s4">struct </span><span class="s1">timeval t0</span><span class="s4">, struct </span><span class="s1">timeval t1)</span>
+<span class="s1">{</span>
+    <span class="s4">return </span><span class="s1">(t1.tv_sec - t0.tv_sec) * </span><span class="s5">1000.0f </span><span class="s1">+ (t1.tv_usec - t0.tv_usec) / </span><span class="s5">1000.0f</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+
+<span class="s0">//Defini��o do tipo Hash</span>
+<span class="s4">struct </span><span class="s1">hash{</span>
+    <span class="s4">int </span><span class="s1">qtd</span><span class="s4">, </span><span class="s1">TABLE_SIZE</span><span class="s4">;</span>
+    <span class="s4">struct </span><span class="s1">aluno **itens</span><span class="s4">;</span>
+
+<span class="s1">}</span><span class="s4">;</span>
+
+<span class="s4">struct </span><span class="s1">elemento{</span>
+    <span class="s4">struct </span><span class="s1">aluno **itens</span><span class="s4">;</span>
+    <span class="s4">struct </span><span class="s1">elemento *prox</span><span class="s4">;</span>
+<span class="s1">}</span><span class="s4">;</span>
+<span class="s4">typedef struct </span><span class="s1">elemento Elem</span><span class="s4">;</span>
+
+
+
+<span class="s1">Hash* criaHash(</span><span class="s4">int </span><span class="s1">TABLE_SIZE){</span>
+
+    <span class="s1">Hash* ha = (Hash*) malloc(</span><span class="s4">sizeof</span><span class="s1">(Hash))</span><span class="s4">;</span>
+    <span class="s4">if</span><span class="s1">(ha != NULL){</span>
+        <span class="s4">int </span><span class="s1">i</span><span class="s4">;</span>
+        <span class="s1">ha-&gt;TABLE_SIZE = TABLE_SIZE</span><span class="s4">;</span>
+        <span class="s1">ha-&gt;itens = (</span><span class="s4">struct </span><span class="s1">aluno**) malloc(TABLE_SIZE * </span><span class="s4">sizeof</span><span class="s1">(</span><span class="s4">struct </span><span class="s1">aluno*))</span><span class="s4">;</span>
+        <span class="s4">if</span><span class="s1">(ha-&gt;itens == NULL){</span>
+            <span class="s1">free(ha)</span><span class="s4">;</span>
+            <span class="s4">return </span><span class="s1">NULL</span><span class="s4">;</span>
+        <span class="s1">}</span>
+        <span class="s1">ha-&gt;qtd = </span><span class="s5">0</span><span class="s4">;</span>
+        <span class="s4">for</span><span class="s1">(i=</span><span class="s5">0</span><span class="s4">; </span><span class="s1">i &lt; ha-&gt;TABLE_SIZE</span><span class="s4">; </span><span class="s1">i++)</span>
+            <span class="s1">ha-&gt;itens[i] = NULL</span><span class="s4">;</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s1">ha</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s4">void </span><span class="s1">liberaHash(Hash* ha){</span>
+    <span class="s4">if</span><span class="s1">(ha != NULL){</span>
+        <span class="s4">int </span><span class="s1">i</span><span class="s4">;</span>
+        <span class="s4">for</span><span class="s1">(i=</span><span class="s5">0</span><span class="s4">; </span><span class="s1">i &lt; ha-&gt;TABLE_SIZE</span><span class="s4">; </span><span class="s1">i++){</span>
+            <span class="s4">if</span><span class="s1">(ha-&gt;itens[i] != NULL)</span>
+                <span class="s1">free(ha-&gt;itens[i])</span><span class="s4">;</span>
+        <span class="s1">}</span>
+        <span class="s1">free(ha-&gt;itens)</span><span class="s4">;</span>
+        <span class="s1">free(ha)</span><span class="s4">;</span>
+    <span class="s1">}</span>
+<span class="s1">}</span>
+
+<span class="s0">//==============================================</span>
+<span class="s4">int </span><span class="s1">valorString(</span><span class="s4">char </span><span class="s1">*str){</span>
+    <span class="s4">int </span><span class="s1">i</span><span class="s4">, </span><span class="s1">valor = </span><span class="s5">7</span><span class="s4">;</span>
+    <span class="s4">int </span><span class="s1">tam = strlen(str)</span><span class="s4">;</span>
+    <span class="s4">for</span><span class="s1">(i=</span><span class="s5">0</span><span class="s4">; </span><span class="s1">i &lt; tam</span><span class="s4">; </span><span class="s1">i++)</span>
+        <span class="s1">valor = </span><span class="s5">31 </span><span class="s1">* valor + (</span><span class="s4">int</span><span class="s1">) str[i]</span><span class="s4">;</span>
+    <span class="s4">return </span><span class="s1">(valor &amp; </span><span class="s5">0x7FFFFFFF</span><span class="s1">)</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s0">//Hash Divisao</span>
+<span class="s0">//int chave = valorString(nome);</span>
+<span class="s0">//pos = chaveDivisao(chave, TABLE_SIZE)</span>
+<span class="s4">int </span><span class="s1">chaveDivisao(</span><span class="s4">int </span><span class="s1">chave</span><span class="s4">, int </span><span class="s1">TABLE_SIZE){</span>
+    <span class="s4">return </span><span class="s1">(chave &amp; </span><span class="s5">0x7FFFFFFF</span><span class="s1">) % TABLE_SIZE</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s0">//==============================================</span>
+<span class="s0">//Hash Dobra</span>
+<span class="s0">//int chave = valorString(nome);</span>
+<span class="s0">//pos = chaveDobra(chave, TABLE_SIZE)</span>
+<span class="s4">int </span><span class="s1">chaveDobra(</span><span class="s4">int </span><span class="s1">chave</span><span class="s4">, int </span><span class="s1">TABLE_SIZE){</span>
+    <span class="s4">int </span><span class="s1">num_bits = </span><span class="s5">10</span><span class="s4">;</span>
+    <span class="s4">int </span><span class="s1">parte1 = chave &gt;&gt; num_bits</span><span class="s4">;</span>
+    <span class="s4">int </span><span class="s1">parte2 = chave &amp; (TABLE_SIZE-</span><span class="s5">1</span><span class="s1">)</span><span class="s4">;</span>
+    <span class="s4">return </span><span class="s1">(parte1 ^ parte2)</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s0">//==============================================</span>
+<span class="s0">//Hash Multiplica��o</span>
+<span class="s0">//int chave = valorString(nome);</span>
+<span class="s0">//pos = chaveDobra(chave, TABLE_SIZE)</span>
+<span class="s4">int </span><span class="s1">chaveMultiplicacao(</span><span class="s4">int </span><span class="s1">chave</span><span class="s4">, int </span><span class="s1">TABLE_SIZE){</span>
+    <span class="s4">double </span><span class="s1">A = </span><span class="s5">0.6180339887</span><span class="s4">; </span><span class="s0">// constante: 0 &lt; A &lt; 1</span>
+    <span class="s4">double </span><span class="s1">val = chave * A</span><span class="s4">;</span>
+    <span class="s1">val = val - (</span><span class="s4">int</span><span class="s1">) val</span><span class="s4">;</span>
+    <span class="s4">return </span><span class="s1">(</span><span class="s4">int</span><span class="s1">) (TABLE_SIZE * val)</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s0">//==============================================</span>
+<span class="s0">// Insere e busca sem tratamento de colis�o</span>
+<span class="s0">//==============================================</span>
+<span class="s4">int </span><span class="s1">insereHash_SemColisao(Hash* ha</span><span class="s4">, struct </span><span class="s1">aluno al){</span>
+    <span class="s4">if</span><span class="s1">(ha == NULL || ha-&gt;qtd == ha-&gt;TABLE_SIZE)</span>
+        <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+
+    <span class="s4">int </span><span class="s1">chave = al.matricula</span><span class="s4">;</span>
+    <span class="s0">//int chave = valorString(al.nome);</span>
+
+    <span class="s4">int </span><span class="s1">pos = chaveDivisao(chave</span><span class="s4">,</span><span class="s1">ha-&gt;TABLE_SIZE)</span><span class="s4">;</span>
+    <span class="s4">struct </span><span class="s1">aluno* novo</span><span class="s4">;</span>
+    <span class="s1">novo = (</span><span class="s4">struct </span><span class="s1">aluno*) malloc(</span><span class="s4">sizeof</span><span class="s1">(</span><span class="s4">struct </span><span class="s1">aluno))</span><span class="s4">;</span>
+    <span class="s4">if</span><span class="s1">(novo == NULL)</span>
+        <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+    <span class="s1">*novo = al</span><span class="s4">;</span>
+    <span class="s1">ha-&gt;itens[pos] = novo</span><span class="s4">;</span>
+    <span class="s1">ha-&gt;qtd++</span><span class="s4">;</span>
+    <span class="s4">return </span><span class="s5">1</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s4">int </span><span class="s1">buscaHash_SemColisao(Hash* ha</span><span class="s4">, int </span><span class="s1">mat</span><span class="s4">, struct </span><span class="s1">aluno* al){</span>
+    <span class="s4">if</span><span class="s1">(ha == NULL)</span>
+        <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+
+    <span class="s4">int </span><span class="s1">pos = chaveDivisao(mat</span><span class="s4">,</span><span class="s1">ha-&gt;TABLE_SIZE)</span><span class="s4">;</span>
+    <span class="s4">if</span><span class="s1">(ha-&gt;itens[pos] == NULL)</span>
+        <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+    <span class="s1">*al = *(ha-&gt;itens[pos])</span><span class="s4">;</span>
+    <span class="s4">return </span><span class="s5">1</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+
+<span class="s0">//==============================================</span>
+<span class="s0">// Insere e busca com tratamento de colis�o: Endere�amento Aberto</span>
+<span class="s0">//==============================================</span>
+<span class="s4">int </span><span class="s1">sondagemLinear(</span><span class="s4">int </span><span class="s1">pos</span><span class="s4">, int </span><span class="s1">i</span><span class="s4">, int </span><span class="s1">TABLE_SIZE){</span>
+    <span class="s4">return </span><span class="s1">((pos + i) &amp; </span><span class="s5">0x7FFFFFFF</span><span class="s1">) % TABLE_SIZE</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s4">int </span><span class="s1">sondagemQuadratica(</span><span class="s4">int </span><span class="s1">pos</span><span class="s4">, int </span><span class="s1">i</span><span class="s4">, int </span><span class="s1">TABLE_SIZE){</span>
+    <span class="s1">pos = pos + </span><span class="s5">2</span><span class="s1">*i + </span><span class="s5">5</span><span class="s1">*i*i</span><span class="s4">;</span><span class="s0">// hash + (c1 * i) + (c2 * i^2)</span>
+    <span class="s4">return </span><span class="s1">(pos &amp; </span><span class="s5">0x7FFFFFFF</span><span class="s1">) % TABLE_SIZE</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s4">int </span><span class="s1">duploHash(</span><span class="s4">int </span><span class="s1">H1</span><span class="s4">, int </span><span class="s1">chave</span><span class="s4">, int </span><span class="s1">i</span><span class="s4">, int </span><span class="s1">TABLE_SIZE){</span>
+    <span class="s4">int </span><span class="s1">H2 = chaveDivisao(chave</span><span class="s4">,</span><span class="s1">TABLE_SIZE-</span><span class="s5">1</span><span class="s1">) + </span><span class="s5">1</span><span class="s4">;</span>
+    <span class="s4">return </span><span class="s1">((H1 + i*H2) &amp; </span><span class="s5">0x7FFFFFFF</span><span class="s1">) % TABLE_SIZE</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s4">int </span><span class="s1">insereHash_EnderAberto(Hash* ha</span><span class="s4">, struct </span><span class="s1">aluno al){</span>
+    <span class="s4">if</span><span class="s1">(ha == NULL || ha-&gt;qtd == ha-&gt;TABLE_SIZE)</span>
+        <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+
+    <span class="s4">int </span><span class="s1">chave = al.matricula</span><span class="s4">;</span>
+    <span class="s0">//int chave = valorString(al.nome);</span>
+
+    <span class="s4">int </span><span class="s1">i</span><span class="s4">, </span><span class="s1">pos</span><span class="s4">, </span><span class="s1">newPos</span><span class="s4">;</span>
+    <span class="s1">pos = chaveDivisao(chave</span><span class="s4">,</span><span class="s1">ha-&gt;TABLE_SIZE)</span><span class="s4">;</span>
+    <span class="s4">for</span><span class="s1">(i=</span><span class="s5">0</span><span class="s4">; </span><span class="s1">i &lt; ha-&gt;TABLE_SIZE</span><span class="s4">; </span><span class="s1">i++){</span>
+        <span class="s1">newPos = sondagemLinear(pos</span><span class="s4">,</span><span class="s1">i</span><span class="s4">,</span><span class="s1">ha-&gt;TABLE_SIZE)</span><span class="s4">;</span>
+        <span class="s0">//newPos = sondagemQuadratica(pos,i,ha-&gt;TABLE_SIZE);</span>
+        <span class="s0">//newPos = duploHash(pos,chave,i,ha-&gt;TABLE_SIZE);</span>
+        <span class="s4">if</span><span class="s1">(ha-&gt;itens[newPos] == NULL){</span>
+            <span class="s4">struct </span><span class="s1">aluno* novo</span><span class="s4">;</span>
+            <span class="s1">novo = (</span><span class="s4">struct </span><span class="s1">aluno*) malloc(</span><span class="s4">sizeof</span><span class="s1">(</span><span class="s4">struct </span><span class="s1">aluno))</span><span class="s4">;</span>
+            <span class="s4">if</span><span class="s1">(novo == NULL)</span>
+                <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+            <span class="s1">*novo = al</span><span class="s4">;</span>
+            <span class="s1">ha-&gt;itens[newPos] = novo</span><span class="s4">;</span>
+            <span class="s1">ha-&gt;qtd++</span><span class="s4">;</span>
+            <span class="s4">return </span><span class="s5">1</span><span class="s4">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s4">int </span><span class="s1">buscaHash_EnderAberto(Hash* ha</span><span class="s4">, int </span><span class="s1">mat</span><span class="s4">, struct </span><span class="s1">aluno* al){</span>
+    <span class="s4">if</span><span class="s1">(ha == NULL)</span>
+        <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+
+    <span class="s4">int </span><span class="s1">i</span><span class="s4">, </span><span class="s1">pos</span><span class="s4">, </span><span class="s1">newPos</span><span class="s4">;</span>
+    <span class="s1">pos = chaveDivisao(mat</span><span class="s4">,</span><span class="s1">ha-&gt;TABLE_SIZE)</span><span class="s4">;</span>
+    <span class="s4">for</span><span class="s1">(i=</span><span class="s5">0</span><span class="s4">; </span><span class="s1">i &lt; ha-&gt;TABLE_SIZE</span><span class="s4">; </span><span class="s1">i++){</span>
+        <span class="s1">newPos = sondagemLinear(pos</span><span class="s4">,</span><span class="s1">i</span><span class="s4">,</span><span class="s1">ha-&gt;TABLE_SIZE)</span><span class="s4">;</span>
+        <span class="s0">//newPos = sondagemQuadratica(pos,i,ha-&gt;TABLE_SIZE);</span>
+        <span class="s0">//newPos = duploHash(pos,mat,i,ha-&gt;TABLE_SIZE);</span>
+        <span class="s4">if</span><span class="s1">(ha-&gt;itens[newPos] == NULL)</span>
+            <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+
+        <span class="s4">if</span><span class="s1">(ha-&gt;itens[newPos]-&gt;matricula == mat){</span>
+            <span class="s1">*al = *(ha-&gt;itens[newPos])</span><span class="s4">;</span>
+            <span class="s4">return </span><span class="s5">1</span><span class="s4">;</span>
+        <span class="s1">}</span>
+    <span class="s1">}</span>
+    <span class="s4">return </span><span class="s5">0</span><span class="s4">;</span>
+<span class="s1">}</span>
+
+<span class="s0">//int insereHash_Encadeado_Separado(Lista* li, struct aluno al){</span>
+<span class="s0">//    if(li == NULL)</span>
+<span class="s0">//        return 0;</span>
+<span class="s0">//    Elem* no;</span>
+<span class="s0">//    no = (hash*) malloc(sizeof(hash));</span>
+<span class="s0">//</span>
+<span class="s0">//    if(no==NULL)</span>
+<span class="s0">//        return 0;</span>
+<span class="s0">//    no-&gt;dados = al;</span>
+<span class="s0">//    no-&gt;prox = NULL;</span>
+<span class="s0">//</span>
+<span class="s0">//    if((*li) == NULL) {</span>
+<span class="s0">//        *li == no;</span>
+<span class="s0">//    }else{</span>
+<span class="s0">//        Elem *aux;</span>
+<span class="s0">//        aux = *li;</span>
+<span class="s0">//        while(aux-&gt;*prox != NULL){</span>
+<span class="s0">//</span>
+<span class="s0">//        }</span>
+<span class="s0">//</span>
+<span class="s0">//    }</span>
+<span class="s0">//</span>
+<span class="s0">//</span>
+<span class="s0">//</span>
+<span class="s0">//}</span>
+<span class="s0">//</span>
+<span class="s0">//int buscaHash_Ecadeamento_Separado(Lista* li, struct hash){</span>
+<span class="s0">//</span>
+<span class="s0">//</span>
+<span class="s0">//}</span>
+
+</pre>
+</body>
+</html>

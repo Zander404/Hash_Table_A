@@ -1,0 +1,62 @@
+<html>
+<head>
+<title>main.c</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #bbb529;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #6a8759;}
+.s3 { color: #6897bb;}
+.s4 { color: #cc7832;}
+.s5 { color: #808080;}
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+main.c</font>
+</center></td></tr></table>
+<pre><span class="s0">#include </span><span class="s2">&lt;stdio.h&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;stdlib.h&gt;</span>
+<span class="s0">#include </span><span class="s2">&lt;sys/time.h&gt;</span>
+<span class="s0">#include </span><span class="s2">&quot;TabelaHash.h&quot;</span>
+
+<span class="s0">#define </span><span class="s1">max  </span><span class="s3">10007</span>
+<span class="s4">int </span><span class="s1">main() {</span>
+    <span class="s4">struct </span><span class="s1">timeval t0</span><span class="s4">;</span>
+    <span class="s4">struct </span><span class="s1">timeval t1</span><span class="s4">;</span>
+    <span class="s4">struct </span><span class="s1">aluno alu[</span><span class="s3">10000</span><span class="s1">]</span><span class="s4">;</span>
+    <span class="s4">float </span><span class="s1">elapsed</span><span class="s4">;</span>
+    <span class="s1">srand(</span><span class="s3">12</span><span class="s1">)</span><span class="s4">;</span>
+    <span class="s1">Hash *hash = criaHash(max)</span><span class="s4">;</span>
+
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s4">; </span><span class="s1">i &lt; </span><span class="s3">10</span><span class="s4">; </span><span class="s1">i++) {</span>
+        <span class="s1">alu[i].matricula = rand()%</span><span class="s3">10000</span><span class="s4">;</span>
+        <span class="s1">alu[i].n1 = rand() % </span><span class="s3">100</span><span class="s4">;</span>
+        <span class="s1">alu[i].n2 = rand() % </span><span class="s3">100</span><span class="s4">;</span>
+        <span class="s1">alu[i].n3 = rand() % </span><span class="s3">100</span><span class="s4">;</span>
+
+    <span class="s1">}</span>
+
+
+    <span class="s1">gettimeofday(&amp;t0</span><span class="s4">, </span><span class="s3">0</span><span class="s1">)</span><span class="s4">;</span>
+    <span class="s5">/* ... YOUR CODE HERE ... */</span>
+    <span class="s4">for </span><span class="s1">(</span><span class="s4">unsigned int </span><span class="s1">i = </span><span class="s3">0</span><span class="s4">; </span><span class="s1">i &lt; </span><span class="s3">10</span><span class="s4">; </span><span class="s1">i++) {</span>
+     <span class="s1">insereHash_SemColisao(hash</span><span class="s4">, </span><span class="s1">alu[i])</span><span class="s4">;</span>
+<span class="s5">//    printf(&quot;\t%s%d%i&quot;, hash);</span>
+     <span class="s1">printf(</span><span class="s2">&quot;</span><span class="s4">\n</span><span class="s2">%d&quot;</span><span class="s4">, </span><span class="s1">alu[i].matricula )</span><span class="s4">;</span>
+    <span class="s1">}</span>
+
+
+    <span class="s1">gettimeofday(&amp;t1</span><span class="s4">, </span><span class="s3">0</span><span class="s1">)</span><span class="s4">;</span>
+
+    <span class="s1">elapsed = timedifference_msec(t0</span><span class="s4">, </span><span class="s1">t1)</span><span class="s4">;</span>
+
+    <span class="s1">printf(</span><span class="s2">&quot;</span><span class="s4">\n </span><span class="s2">Code executed in %f milliseconds.&quot;</span><span class="s4">, </span><span class="s1">elapsed)</span><span class="s4">;</span>
+
+    <span class="s4">return </span><span class="s3">0</span><span class="s4">;</span>
+<span class="s1">}</span>
+</pre>
+</body>
+</html>

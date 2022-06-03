@@ -1,0 +1,3 @@
+C:/Users/Zander/Downloads/Atividade05/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Zander/Downloads/Atividade05/cmake-build-debug/CMakeFiles/Atividade05.dir
+C:/Users/Zander/Downloads/Atividade05/cmake-build-debug/CMakeFiles/edit_cache.dir
