@@ -14,38 +14,61 @@ float timedifference_msec(struct timeval t0, struct timeval t1)
 }
 
 
+//
+//Lista* criaLista(){
+//    Lista* li = (Lista*) malloc(sizeof(Lista));
+//    if( li != NULL){
+//        *li = NULL;
+//    }
+//    return li;
+//}
+//
+//Lista* insereLista(Lista* li, struct aluno al){
+//    if(li == NULL)
+//        return 0;
+//    Elem* no;
+//    no = (Elem*) malloc(sizeof(Elem));
+//    if(no == NULL)
+//        return 0;
+//    no->dados = al;
+//    no->prox = (*li);
+//    *li = no;
+//
+//    return 1;
+//}
+//
+//Lista* consultaLista(Lista* li){
+//    if(li == NULL || *li == NULL){
+//        return 0;
+//    }
+//    return li;
+//
+//}
+//
+//
+//int removeLista(Lista* li){
+//    if(li==NULL || *li == NULL )
+//        return 0;
+//
+//    Elem *no = *li;
+//    *li = no->prox;
+//    free(no);
+//    return 1;
+//}
+//
+//void liberaLista(Lista* li){
+//    if (li != NULL) {
+//        Elem* no;
+//        while((*li) != NULL) {
+//            no = *li;
+//            *li = (*li)->prox;
+//        }
+//        free(no);
+//    }
+//    free(li);
+//}
 
-Lista* criaLista(){
-    Lista* li = (Lista*) malloc(sizeof(Lista));
-    if( li != NULL){
-        *li = NULL;
-    }
-    return li;
-}
 
-Lista* insereLista(Lista* li, struct aluno al){
-    if(li == NULL)
-        return 0;
-    Elem* no;
-    no = (Elem*) malloc(sizeof(Elem));
-    if(no == NULL)
-        return 0;
-    no->dados = al;
-    no->prox = (*li);
-    li = no;
-
-    return 1;
-}
-
-int removeLista(Lista* li){
-    if(li==NULL || *li == NULL )
-        return 0;
-
-    Elem *no = *li;
-    *li = no->prox;
-    free(no);
-    return 1;
-}
 
 
 Hash* criaHash(int TABLE_SIZE){
@@ -150,7 +173,7 @@ int buscaHash_SemColisao(Hash* ha, int mat, struct aluno* al){
 
 
 //==============================================
-// Insere e busca com tratamento de colis�o: Endere�amento Aberto
+// Insere e busca com tratamento de colisao: Enderecamento Aberto
 //==============================================
 int sondagemLinear(int pos, int i, int TABLE_SIZE){
     return ((pos + i) & 0x7FFFFFFF) % TABLE_SIZE;
@@ -165,7 +188,9 @@ int duploHash(int H1, int chave, int i, int TABLE_SIZE){
     int H2 = chaveDivisao(chave,TABLE_SIZE-1) + 1;
     return ((H1 + i*H2) & 0x7FFFFFFF) % TABLE_SIZE;
 }
-
+//=========================================================
+//Insere e Busca EnderAberto
+//=========================================================
 int insereHash_EnderAberto(Hash* ha, struct aluno al){
     if(ha == NULL || ha->qtd == ha->TABLE_SIZE)
         return 0;
@@ -214,34 +239,46 @@ int buscaHash_EnderAberto(Hash* ha, int mat, struct aluno* al){
     return 0;
 }
 
-//int insereHash_Encadeado_Separado(Lista* li, struct aluno al){
-//    if(li == NULL)
-//        return 0;
-//    Elem* no;
-//    no = (hash*) malloc(sizeof(hash));
-//
-//    if(no==NULL)
-//        return 0;
-//    no->dados = al;
-//    no->prox = NULL;
-//
-//    if((*li) == NULL) {
-//        *li == no;
-//    }else{
-//        Elem *aux;
-//        aux = *li;
-//        while(aux->*prox != NULL){
-//
-//        }
-//
-//    }
-//
-//
-//
-//}
-//
-//int buscaHash_Ecadeamento_Separado(Lista* li, struct hash){
-//
-//
-//}
+int insereHash_Encadeado_Separado(Hash *ha, struct aluno al){
+
+    if(ha==NULL || ha->TABLE_SIZE == ha->qtd)
+        return 0;
+
+    struct aluno *novo;
+
+    novo = (struct aluno*) malloc(sizeof(struct aluno));
+    if(novo == NULL)
+        return 0;
+    *novo = al;
+
+    int pos = chaveDivisao(al.matricula, ha->TABLE_SIZE);
+
+    if(ha->itens[pos]!=NULL)
+//        printf("colisão");
+    novo->prox = ha->itens[pos];
+    ha->itens[pos] = novo;
+        return 1;
+    }
+
+int buscaHash_Ecadeamento_Separado(Hash *ha, struct aluno *al, int mat){
+    int i, pos, newPos;
+
+    if(ha == NULL)
+        return 0;
+
+    struct aluno *aux;
+    aux = (struct aluno*) malloc(sizeof(struct aluno));
+    if(aux == NULL)
+        return 0;
+
+    aux = ha->itens[pos];
+    pos = chaveDivisao(mat,ha->TABLE_SIZE);
+
+    while(aux != NULL && aux->matricula != mat){
+        aux = aux->prox;
+    }
+
+    *al = *aux;
+    return 1;
+}
 

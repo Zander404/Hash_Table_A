@@ -7,58 +7,60 @@
 int main() {
     struct timeval t0;
     struct timeval t1;
-    struct aluno alu[1000];
+    struct aluno* alu;
+    alu = (struct aluno*) malloc(sizeof(struct aluno));
     int soma;
     float elapsed;
     srand(12);
+
     Hash *hash = criaHash(max);
-
     for (int i = 0; i < 1000; i++) {
-        alu[i].matricula = rand() % 10000;
-//        alu[i].n1 = rand() % 100;
-//        alu[i].n2 = rand() % 100;
-//        alu[i].n3 = rand() % 100;
-
+        alu->matricula = rand() % 10000;
+        alu->n1 = rand() % 100;
+        alu->n2 = rand() % 100;
+        alu->n3 = rand() % 100;
     }
+
+    srand(5);
 
     gettimeofday(&t0, 0);
     /* ... YOUR CODE HERE ... */
 
-    //Insere Hash
     for ( int i = 0; i < 1000; i++) {
-     insereHash_SemColisao(hash, alu[i]);
+     insereHash_SemColisao(hash, *alu);
     }
 
     //Busca Hash
-    srand(2);
-    for ( int i = 0; i < 100; i++) {
+     for(int i = 0; i<100; i++){
         if(buscaHash_SemColisao(hash, rand(),alu) == 1){
             printf("\nChave encontrada!!!");
-        }else{
+        }
+        if(buscaHash_SemColisao(hash,,alu) == 0) {
             printf("\nChave nao encontrada!!!");
         }
-        soma+= buscaHash_SemColisao(hash, rand(),alu);
+
+        soma += buscaHash_SemColisao(hash, rand(),alu);
     }
-    printf("\n%d", soma);
 
     //Insere Hash EnderAberto
     for(int i=0;i<100; i++){
-        insereHash_EnderAberto(hash, alu[i]);
+        insereHash_EnderAberto(hash, alu);
     }
 
     //Busca Hash EnderAberto
     for(int i=0;i<100;i++){
-        buscaHash_EnderAberto(hash,rand(),alu);
+        if()
+            buscaHash_EnderAberto(hash,rand(),&alu);
     }
 
     //Insere Hash Encadeamento Separado
     for(int i=0;i<100;i++){
-
+        insereHash_Encadeamento_Separado(hash,alu );
     }
 
     //Busca Hash Encadeamento Separado
     for(int i=0;i<100;i++){
-
+        buscaHash_Encadeamento_Separado(hash, rand(), &alu);
     }
 
     //Hash pela Divisao
