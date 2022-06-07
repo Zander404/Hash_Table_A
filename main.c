@@ -3,83 +3,113 @@
 #include <sys/time.h>
 #include "TabelaHash.h"
 
-#define max  10007
+#define max  10011
 int main() {
     struct timeval t0;
     struct timeval t1;
-    struct aluno* alu;
-    alu = (struct aluno*) malloc(sizeof(struct aluno));
-    int soma;
-    float elapsed;
+    struct aluno *aluno;
+    aluno = (struct aluno*) malloc(sizeof(struct aluno));
+    int colisao = 0;
+    float elapsed = 0;
+    int matricula = 0;
     srand(12);
 
+
     Hash *hash = criaHash(max);
-    for (int i = 0; i < 1000; i++) {
-        alu->matricula = rand() % 10000;
-        alu->n1 = rand() % 100;
-        alu->n2 = rand() % 100;
-        alu->n3 = rand() % 100;
+    for (int i = 0; i < 10; i++) {
+        aluno->matricula = rand() % 10000;
+        aluno->n1 = rand() % 100;
+        aluno->n2 = rand() % 100;
+        aluno->n3 = rand() % 100;
     }
 
-    srand(5);
+//========================================================================================================
+    //Insere Hash Sem Colisao
 
     gettimeofday(&t0, 0);
-    /* ... YOUR CODE HERE ... */
 
-    for ( int i = 0; i < 1000; i++) {
-     insereHash_SemColisao(hash, *alu);
-    }
-
-    //Busca Hash
-     for(int i = 0; i<100; i++){
-        if(buscaHash_SemColisao(hash, rand(),alu) == 1){
-            printf("\nChave encontrada!!!");
-        }
-        if(buscaHash_SemColisao(hash,,alu) == 0) {
-            printf("\nChave nao encontrada!!!");
-        }
-
-        soma += buscaHash_SemColisao(hash, rand(),alu);
-    }
-
-    //Insere Hash EnderAberto
-    for(int i=0;i<100; i++){
-        insereHash_EnderAberto(hash, alu);
-    }
-
-    //Busca Hash EnderAberto
-    for(int i=0;i<100;i++){
-        if()
-            buscaHash_EnderAberto(hash,rand(),&alu);
-    }
-
-    //Insere Hash Encadeamento Separado
-    for(int i=0;i<100;i++){
-        insereHash_Encadeamento_Separado(hash,alu );
-    }
-
-    //Busca Hash Encadeamento Separado
-    for(int i=0;i<100;i++){
-        buscaHash_Encadeamento_Separado(hash, rand(), &alu);
-    }
-
-    //Hash pela Divisao
-    for(int i=0;i<100;i++){
-        chaveDivisao(rand(),hash);
-
-    }
-
-    //Hash com Sondagem Quadratica
-    for(int i=0;i<100;i++){
-        sondagemQuadratica(1,1,hash);
-
-    }
+    insereHash_SemColisao(hash, *aluno);
 
     gettimeofday(&t1, 0);
-
     elapsed = timedifference_msec(t0, t1);
+    printf("\n Tempo de InserirHash Sem Colisao %f .", elapsed);
 
-    printf("\n Code executed in %f milliseconds.", elapsed);
+//========================================================================================================
+
+//Busca Hash Sem Colisao
+
+    gettimeofday(&t0, 0);
+    buscaHash_SemColisao(hash, 77, aluno);
+
+    gettimeofday(&t1, 0);
+    elapsed = timedifference_msec(t0, t1);
+    printf("\n Tempo de BuscaHash Sem Colisao %f milliseconds.", elapsed);
+
+////========================================================================================================
+//
+//    //Insere Hash EnderAberto
+//
+//    gettimeofday(&t0, 0);
+//
+//    insereHash_EnderAberto(hash, *aluno);
+//
+//    gettimeofday(&t1, 0);
+//    elapsed = timedifference_msec(t0, t1);
+//    printf("\n Tempo de InserirHash EnderAberto %f milliseconds.", elapsed);
+//
+////========================================================================================================
+//    //Busca Hash EnderAberto
+//
+//    gettimeofday(&t0, 0);
+//
+//    buscaHash_EnderAberto(hash, rand(), aluno);
+//
+//    gettimeofday(&t1, 0);
+//    elapsed = timedifference_msec(t0, t1);
+//    printf("\n Tempo de BuscaHash EnderAberto %f milliseconds.", elapsed);
+//
+////========================================================================================================
+////Insere Hash Encadeamento Separado
+//
+//    gettimeofday(&t0, 0);
+//
+//    insereHash_Encadeamento_Separado(hash,*aluno);
+//
+//    gettimeofday(&t1, 0);
+//    elapsed = timedifference_msec(t0, t1);
+//    printf("\n Tempo de InserirHash Encadeamento Separado %f milliseconds.", elapsed);
+//
+//
+//    //Busca Hash Encadeamento Separado
+//
+//    gettimeofday(&t0, 0);
+//
+//    buscaHash_Encadeamento_Separado(hash, rand(), aluno);
+//
+//    gettimeofday(&t1, 0);
+//    elapsed = timedifference_msec(t0, t1);
+//    printf("\n Tempo de BuscaHash Encadeamento Separado %f milliseconds.", elapsed);
+//
+//    //Hash pela Divisao
+//
+//    gettimeofday(&t0, 0);
+//
+//    chaveDivisao(rand(),hash->TABLE_SIZE);
+//
+//    gettimeofday(&t1, 0);
+//    elapsed = timedifference_msec(t0, t1);
+//    printf("\n Chave Divisao %f milliseconds.", elapsed);
+//
+//
+//    //Hash com Sondagem Quadratica
+//
+//    gettimeofday(&t0, 0);
+//
+//    sondagemQuadratica(rand(),rand(),hash->TABLE_SIZE);
+//
+//    gettimeofday(&t1, 0);
+//    elapsed = timedifference_msec(t0, t1);
+//    printf("\n Sondagem quadratica %f milliseconds.", elapsed);
 
     return 0;
 }

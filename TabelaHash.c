@@ -239,7 +239,7 @@ int buscaHash_EnderAberto(Hash* ha, int mat, struct aluno* al){
     return 0;
 }
 
-int insereHash_Encadeado_Separado(Hash *ha, struct aluno al){
+int insereHash_Encadeamento_Separado(Hash *ha, struct aluno al){
 
     if(ha==NULL || ha->TABLE_SIZE == ha->qtd)
         return 0;
@@ -260,7 +260,7 @@ int insereHash_Encadeado_Separado(Hash *ha, struct aluno al){
         return 1;
     }
 
-int buscaHash_Ecadeamento_Separado(Hash *ha, struct aluno *al, int mat){
+int buscaHash_Encadeamento_Separado(Hash *ha, int mat, struct aluno* al){
     int i, pos, newPos;
 
     if(ha == NULL)
