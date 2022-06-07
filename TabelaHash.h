@@ -30,11 +30,11 @@ int valorString(char *str);
 int insereHash_SemColisao(Hash* ha, struct aluno al);
 int buscaHash_SemColisao(Hash* ha, int mat, struct aluno* al);
 
-// ENDERABERTO
+//ENDERABERTO
 int insereHash_EnderAberto(Hash* ha, struct aluno al);
 int buscaHash_EnderAberto(Hash* ha, int mat, struct aluno* al);
 
-//ENNCADEAMENTO SEPARADO
+//ENCADEAMENTO SEPARADO
 
 int insereHash_Encadeamento_Separado(Hash* ha, struct aluno al);
 int buscaHash_Encadeamento_Separado(Hash* ha, int mat, struct aluno* al);
@@ -46,3 +46,6 @@ int chaveMultiplicacao(int chave, int TABLE_SIZE);
 int sondagemLinear(int pos, int i, int TABLE_SIZE);
 int sondagemQuadratica(int pos, int i, int TABLE_SIZE);
 int duploHashing(int pos, int chave, int i, int TABLE_SIZE);
+
+
+int checarColisao(Hash* ha, int mat);

@@ -7,11 +7,10 @@
 #include <sys/time.h>
 #include "TabelaHash.h" //inclui os Prot�tipos
 
-
 float timedifference_msec(struct timeval t0, struct timeval t1)
 {
     return (t1.tv_sec - t0.tv_sec) * 1000.0f + (t1.tv_usec - t0.tv_usec) / 1000.0f;
-}
+};
 
 
 //
@@ -282,3 +281,9 @@ int buscaHash_Encadeamento_Separado(Hash *ha, int mat, struct aluno* al){
     return 1;
 }
 
+int checarColisao(Hash* ha, int matricula) {
+    if (ha->itens[chaveDivisao(matricula, ha->TABLE_SIZE)] == NULL)
+        return 1;
+    else
+        return 0;
+}
